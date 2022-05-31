@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css'>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      /* 無法被選取 */
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box; 
+    }
+
+
+    .container { 
+      height: 100vh;
+      margin: auto;
+      overflow: hidden;
+    }
+
+    /* 各區分部％ */
+    header {
+      width: 100vw;
+      height: 56px; 
+      padding: 0 30px;
+      background-color: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(5px);
+      display: inline-block;
+      vertical-align: middle;
+      white-space: nowrap;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
+
+    main {
+      width: 81%;
+      height: 100vh;
+      float: right;
+    }
+
+    nav {
+      /* display: none; */
+      /* background-color:#fbfbfb; */
+      padding: 56px 15px 0 0;
+      width: 19%;
+      /* max-width: 260px; */
+      /* width: 220px; */
+      height: 100vh;
+      float: left;
+      /* overflow: auto; */
+    }
+
+    nav:hover {
+      overflow-y: auto
+    }
+
+    nav a {
+      display: inline-block;
+      text-decoration: none;
+      color: #272727;
+      font-size: 14px;
+      padding: 10px 0;
+    }
+
+    nav li {
+      padding: 0 30px;
+    }
+
+    nav li:hover {
+      background-color:#E0E0E0;
+    }
+
+    nav i {
+      display: inline-block;
+      vertical-align: middle;
+      width: 20px;
+      margin-left: -2px;
+      margin-right: 28px;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    /* youtube標題區 */
+    /* youtube標題區 - (A)logo區 */
+    .logo {
+      /* width: 8%; */
+      min-width: 190px;
+      height: 100%;
+      float: left;
+      /* background-color:lightsteelblue; */
+      white-space: nowrap;
+    }
+
+    .logo .hamIcon {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 0;
+      /* padding-right: 20px; */
+    }
+
+    .logo .hamIcon i {
+      font-size: 20px;
+      color: #272727;
+    }
+
+    .logoIcon {
+      display: inline-block;
+      width: 110px;
+      height: 56px;
+      line-height: 56px;
+      /* background-color: white; */
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .logoIcon::after {
+      content: 'TW';
+      display: inline-block;
+      position: absolute;
+      top: -10px;
+      left: 105%;
+      color: rgb(105, 105, 105	);
+      font-size: .1rem;
+      font-weight: bold;
+    }
+
+    .logoIcon img {
+      vertical-align: middle;
+      width: 100%;
+    }
+
+
+    /* youtube標題區 - (B)搜尋區 */
+    .search {
+      width: 55%;
+      /* min-width: 700px; */
+      position: absolute;
+      top: 0;
+      left: 55%;
+      transform: translateX(-45%);
+      height: 56px;
+      float: left;
+      line-height: 56px;
+    }
+
+    .searchBar {
+      width: 70%;
+      min-width: 100px;
+      height: 40px;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #E0E0E0;
+      outline: none; 
+    }
+
+    .searchBtn::placeholder {
+      color:#BEBEBE;
+    }
+
+    .searchBtn {
+      width: 8%;
+      min-width: 10px;
+      height: 40px;
+      color: #272727;
+      border: 1px solid #E0E0E0;
+      background-color: #FCFCFC;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+      top: 0;
+      right: 2%;
+    }
+
+    .searchBtn .microphone {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      border-radius: 50%;
+      background-color: #F0F0F0;
+      text-align: center;
+      position: relative;
+      top: 0;
+      right: 1%;
+    }
+
+    .searchBtn .microphone i {
+      vertical-align: middle;
+    }
+    /* youtube標題區 - (C)使用者登入區 */
+    .info {
+      width: 15%;
+      min-width: 200px;
+      height: 100%;
+      float: right;
+      font-size: 0;
+    }
+
+    .info .icon {
+      /* display: inline-block; */
+      /* width: 20px; */
+      vertical-align: middle;
+      text-align: center;
+      line-height: 56px;
+      font-size: 20px;
+      color: #272727;
+      float: left;
+      padding: 0 7%;
+    }
+
+    .info .icon:nth-child(4) {
+      text-align: right;
+      color: dodgerblue;
+      font-size: 40px;
+      float: right;
+      padding: 0%;
+    }
+
+    /* #user {
+      background-color: DodgerBlue;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+      width: 33px;
+      height: 33px;
+      margin-left: 15px;
+    } */
+
+
+
+
+
+
+    /* youtube 側邊導覽列 */
+    .menu-group {
+      /* border-top: 1px solid #D0D0D0; */
+      border-bottom: 1px solid #D0D0D0;
+      /* margin-top: 10px; */
+      padding: 10px 0;
+    }
+
+    .userLogin {
+      margin-top: 10px;
+      padding: 10px 35px 10px 30px;
+    }
+    .userLogin p {
+      color:#272727;
+      font-size: 13px;
+    }
+
+    .userLoginBtn {
+      border: 1px solid dodgerblue;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      width: 95px;
+      text-align: center;
+    }
+
+    .userLoginBtn i {
+      margin-right: 5px;
+    }
+    
+    .userLoginBtn a {
+      color: dodgerblue;
+      padding: 8px;
+    }
+
+    .menu-group h6 {
+      font-weight: bold;
+      font-size: 14px;
+      color: #4F4F4F;
+      padding: 10px 30px;
+    }
+
+    .menu-group:nth-child(4) i {
+      font-size: 25px;
+    }
+
+    .menu-group:last-child {
+      margin-top: 10px;
+    }
+
+    .menu-group:last-child ul {
+      /* display: inline-block; */
+      padding: 0 30px;
+      margin: 0;
+      margin-bottom: 10px;
+      line-height: 10px;
+    }
+    .menu-group:last-child li {
+      display: inline-block;
+      font-size: 0;
+      padding: 0;
+      margin: 0;
+    }
+    .menu-group:last-child li:hover {
+      background-color: rgba(224, 224, 224, 0);
+    }
+    .menu-group:last-child li a {
+      font-weight: bold;
+      font-size: 12px;
+      color: #5B5B5B;
+      padding: 0;
+      padding-right: 1px;
+    }
+
+    .menu-group:last-child p {
+      padding: 0 30px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: #9D9D9D;
+    }
+    /* main {
+      width: calc(100% - 260px);
+      height: 100vh;
+    } */
+
+
+    /* youtube aside 搜尋 */
+    .sort {
+      width: 100%;
+      height: 56px;
+      border-top: 1px solid #D0D0D0;
+      border-bottom: 1px solid #D0D0D0;
+      float: left;
+      position: fixed;
+      top: 56px;
+      z-index: 5;
+      white-space: nowrap;
+      line-height: 56px;
+      /* font-size: 0; */
+    }
+
+    .sort::after {
+      content: '';
+      position: absolute;
+      background-color: rgba(255, 255, 255, .9);
+      backdrop-filter: blur(5px);
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      z-index: -5;
+    }
+
+    .sort ul {
+      padding: 0 20px;
+      padding-left: 1.5%;
+      font-size: 0;
+    }
+
+    .sort ul li {
+      display: inline-block;
+      /* float: left; */
+      padding-right: 8px;
+    }
+
+    .sort ul li a {
+      text-decoration: none;
+      vertical-align: middle;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 7px 14px;
+      border: 1px solid #BEBEBE;
+      border-radius: 20px;
+      color: #272727;
+      background-color: #F0F0F0;
+    }
+
+    .sort ul li a:hover {
+      background-color:#E0E0E0;
+    }
+
+    .sort ul li:last-child a {
+      border-radius: 0;
+      border: none;
+      background-color: rgba(255, 255, 255, 0);
+      position: fixed;
+      display: inline-block;
+      width: 20px;
+      padding: 0;
+      top: 56px;
+      right: 0;
+    }
+    
+    .sort ul li:last-child a::after {
+      content: '';
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 1);
+      filter: blur(5px);
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      right: -20px;
+      left: -15px;
+      z-index: -10;
+    }
+
+    .sort ul li a.action {
+      background-color: #272727;
+      color:#fbfbfb;
+      border: none;
+      font-weight: normal;
+    }
+
+    /* youtube預覽區 */
+    .content {
+      max-width: 100%;
+      height: 100vh;
+      /* background-color: blanchedalmond; */
+      overflow-y: auto;
+      /* margin-top: 85px; */
+    }
+
+    .content .row {
+      max-width: 100%;
+      /* height: 40%; */
+      min-height: 280px;
+      padding: 2%;
+      /* margin-bottom: 10%; */
+      padding-right: 0;
+      background-color:#fbfbfb;
+    }
+
+    .content .row:first-child {
+      margin-top: 112px;
+    }
+
+    .col {
+      width: 23.5%;
+      /* min-width: 250px; */
+      /* height: 100%; */
+      min-height: 180px;
+      /* background-color: rgb(59, 106, 12); */
+      /* margin: 2%; */
+      margin-right: 1.5%;
+      float: left;
+      font-size: 0;
+    }
+
+    .col:first-child {
+      margin-left: 0;
+    }
+
+    /* youtube小圖區 */
+    .card-cover {
+      width: 100%;
+      height: 65%;
+      position: relative;
+      z-index: 1;
+    }
+    .card-cover .time {
+      position: absolute;
+      right: 2%;
+      bottom: 2%;
+      display: block;
+      background-color:#272727;
+      font-size: .1rem;
+      -webkit-text-size-adjust: none;
+      color:#FCFCFC;
+      padding: 1%;
+    }
+
+    .card-cover img, .chart img {
+      width: 100%;
+      height: 100%;   
+      object-fit: cover;
+    }
+    .card-body {
+      width: 100%;
+      height: 35%;
+      padding-top: 5%;
+    }
+
+    .chart {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      /* background-color: black; */
+      float: left;
+      overflow: hidden;
+    }
+
+    .card-text {
+      width: 80%;
+      float: left;
+    }
+    .card-title{
+      font-size: 13px;
+      font-weight: 600;
+
+      /* 標題超過兩行就...*/
+      overflow:hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+    }
+    .card-news {
+      font-size: 2px;
+      line-height: 18px;
+      -webkit-text-size-adjust: none;
+      color: #888888;
+      padding-top: 5px;
+    }
+
+
+    @media (max-width:992px) {
+      main {
+        width: calc(100% - 70px)
+      }
+
+      nav {
+        width: 70px;
+        padding-right: 0;
+      }
+
+      nav i {
+        display: block;
+        padding-bottom: 5px;
+        margin: 0;
+        padding-right: 40px;
+        padding-left: 23px;
+      }
+
+      nav li {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      nav a {
+        display: block;
+        font-size: 12px;
+      }
+
+      .menu-group {
+        border-bottom: none;
+        text-align: center;
+        padding-bottom: 0;
+      }
+
+      .menu-group li {
+        margin-bottom: 15%;
+      }
+
+      .menu-group:nth-child(2)~ .menu-group {
+        display: none;
+      }
+    }
+
+
+
+ 
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="hamIcon"><i class="fa-solid fa-bars"></i></div>
+        <div class="logoIcon">
+            <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="youtube"></a>
+        </div>
+      </div>
+      <div class="search">
+        <div class="seachWrap">
+          <input class="searchBar" type="text" name="search" id="search" placeholder="搜尋">
+          <button class="searchBtn"><i class="fas fa-search"></i></button>
+          <div class="microphone"><i class="fa-solid fa-microphone"></i></i></div>
+        </div>
+      </div>
+      <div class="info">
+        <div class="icon"><i class="fa-solid fa-video"></i></div>
+        <div class="icon"><i class="fa-solid fa-table-cells"></i></div>
+        <div class="icon"><i class="fa-solid fa-bell"></i></div>
+        <div class="icon"><i class="fa-regular fa-circle-user"></i></div>
+        <!-- <div id="user"></i></i></div> -->
+      </div>
+    </header>
+
+    <nav class="navbar">
+      <div class="menu-group">
+        <ul>
+          <li><a href="#"><i class="fa-solid fa-house"></i>首頁</a></li>
+          <li><a href="#"><i class="fa-regular fa-compass"></i>探索</a></li>
+          <li><a href="#"><i class="fa-solid fa-otter"></i>shorts</a></li>
+          <li><a href="#"><i class="fa-solid fa-minimize"></i>訂閱內容</a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <ul>
+          <li><a href="#"><i class="fa-regular fa-file-video"></i></i>媒體庫</a></li>
+          <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i>觀看紀錄</a></li>
+        </ul>
+      </div>
+      <div class="menu-group userLogin">
+          <p>登入帳戶即可對影片表示喜歡、發布留言及訂閱頻道。</p>
+          <div class="userLoginBtn"><a href="#"><i class="fa-regular fa-circle-user"></i>登入</a></div>
+      </div>
+      <div class="menu-group">
+        <h6>YOUTUBE 精選</h6>
+        <ul>
+          <li><a href="#"><i class="fa-solid fa-record-vinyl"></i>音樂</a></li>
+          <li><a href="#"><i class="fa-solid fa-bowling-ball"></i>體育</a></li>
+          <li><a href="#"><i class="fa-brands fa-xbox"></i>遊戲</a></li>
+          <li><a href="#"><i class="fa-solid fa-tape"></i>電影</a></li>
+          <li><a href="#"><i class="fa-solid fa-earth-oceania"></i>新聞</a></li>
+          <li><a href="#"><i class="fa-brands fa-gratipay"></i>直播</a></li>
+          <li><a href="#"><i class="fa-solid fa-globe"></i>360 度影片</a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <ul>
+          <li><a href="#"><i class="fa-regular fa-rectangle-xmark"></i>瀏覽頻道</a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <h6>更多 YOUTUBE 功能</h6>
+        <ul>
+          <li style="font-size: 7px; letter-spacing: 0.1px; margin-left: -3px;"><a href="#"><i class="fa-solid fa-boxes-packing"></i>YouTube Premium</a></li>
+          <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i>直播</a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <ul>
+          <li><a href="#"><i class="fa-solid fa-gear"></i>設定</a></li>
+          <li><a href="#"><i class="fa-solid fa-font-awesome"></i>檢舉紀錄</a></li>
+          <li><a href="#"><i class="fa-regular fa-circle-question"></i>說明</a></li>
+          <li><a href="#"><i class="fa-regular fa-envelope"></i>提供意見</a></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <ul>
+          <li><a href="https://about.youtube/">簡介</a></li>
+          <li><a href="https://blog.youtube/">媒體</a></li>
+          <li><a href="https://www.youtube.com/howyoutubeworks/policies/copyright/">版權</a></li>
+          <li><a href="https://www.youtube.com/t/contact_us/">與我們聯絡</a></li>
+          <li><a href="https://www.youtube.com/creators/">創作者</a></li>
+          <li><a href="https://www.youtube.com/ads/">廣告</a></li>
+          <li><a href="https://developers.google.com/youtube">開發人員</a></li>
+        </ul>
+        <ul>
+          <li><a href="https://www.youtube.com/t/terms">條款</a></li>
+          <li><a href="https://policies.google.com/privacy?hl=zh-TW">隱私權</a></li>
+          <li><a href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/">政策與安全性</a></li>
+          <li><a href="https://www.youtube.com/howyoutubeworks/?utm_campaign=ytgen&utm_source=ythp&utm_medium=LeftNav&utm_content=txt&u=https%3A%2F%2Fwww.youtube.com%2Fhowyoutubeworks%3Futm_source%3Dythp%26utm_medium%3DLeftNav%26utm_campaign%3Dytgen">YouTube運作方式</a></li>
+          <li><a href="https://www.youtube.com/new">測試新功能</a></li>
+        </ul>
+        <p>© 2022 Google LLC</p>
+      </div>
+    </nav>
+
+    <main>
+      <aside class="sort">
+          <ul>
+            <li><a href="#" class="action">全部</a></li>
+            <li><a href="#">健身</a></li>
+            <li><a href="#">烹飪節目</a></li>
+            <li><a href="#">動畫</a></li>
+            <li><a href="#">觀光</a></li>
+            <li><a href="#">文學</a></li>
+            <li><a href="#">音樂</a></li>
+            <li><a href="#">直播中</a></li>
+            <li><a href="#">單車運動</a></li>
+            <li><a href="#">遊戲</a></li>
+            <li><a href="#">自然</a></li>
+            <li><a href="#">烹飪</a></li>
+            <li><a href="#">視覺藝術</a></li>
+            <li><a href="#">動物冒險遊戲</a></li>
+            <li><a href="#">最新上傳</a></li>
+            <li><a href="#">></a></li>
+          </ul>
+      </aside>
+      
+      <div class="content">
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/UpMJOf8jj8k/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBBDHmSkOG5NAUbiwkO-uO59uGQzg" alt="">
+                <div class="time">2:07:34</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLSgiejflvY4rOHZEpsmFQdJk1Ms2lrmG43x6c29=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">ジブリジャズ 30曲 Studio Ghibli Winter Night Jazz Piano Collection Piano Covered by Relax Music BGM CHANNEL</div>
+                  <div class="card-news">
+                    <p>Relax Music BGM CHANNEL</p>
+                    <p>觀看次數：30萬次．六個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/JJ_Otuu5-Oo/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBc_GIrJxKcQRetqTLs8XauOz8Rzg" alt="">
+                <div class="time">46:17</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/I4ffRajtenhiCWDaD6i2ONwRofUexo2Q0caVCtdM7H3W-WJEQ25PJb16TkTQi3VRrI7jkNNMFbw=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">A Taiwanese playlist for when you're feeling 'more than blue'</div>
+                  <div class="card-news">
+                    <p>gooey gooey</p>
+                    <p>觀看次數：54萬次．7天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/kb0whVogBkI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAYVqv9-8YFR_W6XYAK9aWAwDJktA" alt="">
+                <div class="time">3:16</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/dEKrrvfWcq6PXsnropRJkVkN-5zlB7syjI8jrdkYiRybty1oIw033Bfg4Ty50cACG5S-45mT=s48-c-k-c0x00ffffff-no-nd-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Sunset Rollercoaster - Candlelight feat. OHHYUK</div>
+                  <div class="card-news">
+                    <p>Sunset Rollercoaster落日飛車</p>
+                    <p>觀看次數：142萬次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/oVi5gtzTDx0/hq720_live.jpg?sqp=CKjtl5QG-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB5gcV-wRw8VXKcfvljm4BAlGHeew" alt="">
+                <div class="time">17:28</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/m1zh1sDAlZqEpZKTzcwaEAVqSuLeu-urrzDg7jmNI6Xv1kUK1v74PAAZobMcUKdSDxUDU5Ij5w=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Indie / Bedroom / Pop / Surf Rock - 24/7 Radio....</div>
+                  <div class="card-news">
+                    <p>Nice Guys</p>
+                    <p>觀看次數：3041次．7天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/8g8pi690mDU/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBeVEFOxviYweUNP6EbCBdkego75Q" alt="">
+                <div class="time">7:04</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTW8jcUyZd7oGIAZgMwWV6fP7JJYfswGZV_jJEdjA=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">【地下大總統】社畜加班地獄！難以喘氣的窒息生活！｜反正我很閒</div>
+                  <div class="card-news">
+                    <p>反正我很閒</p>
+                    <p>觀看次數：37萬次 2天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/nou4Wn-_uEo/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB2i-untOaXxELMm2SzUkcvdkD1TQ" alt="">
+                <div class="time">2:07</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/vDk1CBmUhafYeDxMAVyEZL86Ut0WwXsxyforLSvccqY0Q2keGTAvFq7cEoocSawGqY6U7glSbQ=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Wet Leg - Being In Love (Official Audio)</div>
+                  <div class="card-news">
+                    <p>Wet Leg</p>
+                    <p>觀看次數：8.2萬次．1個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/qUTD9r3G8W0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_wn_QvU92ZQR7z0XejMpbIqF76A" alt="">
+                <div class="time">15:15</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/5JcnkKovU5kZwgAHAC9eez2h9MUe6yu-lxbrLHTdBtV9NHYPbzqEAVFPXhKM3b3fY6IYS3C_ZN8=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">【自動放送】山手線 外回り車内放送【駅ﾅﾝﾊﾞﾘﾝｸﾞ対応前 / [JAP....</div>
+                  <div class="card-news">
+                    <p>MusashinoCh./むさしのチャンネル</p>
+                    <p>觀看次數：10.1萬次．6年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/4jJUlzqi3gA/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCyj5UkBwOmpIb3dONEMfUM7L9rVw" alt="">
+                <div class="time">3:04</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLS8k8HE7Ys-UpOxmbsdKnsHSsgNNnyIDNIGx4aP2g=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Arctic Monkeys - I Wanna Be Yours</div>
+                  <div class="card-news">
+                    <p>Arctic Monkeys</p>
+                    <p>觀看次數：5萬次．8年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/18HeaU4aI5U/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBdDu8srN9VmMCY4fYf8ZjohsuHew" alt="">
+                <div class="time">1:46</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTuRIF9EItCSIp1JaymtKEG5se7TGEz6LNEpJu4=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">國中英文基本單字</div>
+                  <div class="card-news">
+                    <p>MAXDEV</p>
+                    <p>觀看次數：9,221次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/3_GFxZ9xA7o/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA_-wn6YOkQjeQi_xRJn3WPVVvL6g" alt="">
+                <div class="time">4:27</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/LVB1hPsC9Q34arbI1uddFT5X_VsMvBdFve2nk8x7Sqrjn5azGQe-YMsZPAYo3SzksAWXwhQjNV8=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">美秀集團 Amazing Show－擋一根 Chill Out【Official Music Video】</div>
+                  <div class="card-news">
+                    <p>美秀集團 Amazing Show</p>
+                    <p>觀看次數：15萬次．3年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/Q34-GYgjir4/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCZFavXnNAtXq3UI8EehD_QfWQU1A" alt="">
+                <div class="time">2:15:05</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTu8DX5-Llq86RjUh36ClljeTXU-ca_vgrelpkJXA=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">All toys of the Yuusha(brave) series [1990-1997+α] 勇者....</div>
+                  <div class="card-news">
+                    <p>ユキオ/Yukio</p>
+                    <p>觀看次數：40.1萬次．2年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/FNJG6MsKO0k/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLS6vbNhYCl4gb_5zVrFIoqLkr7w" alt="">
+                <div class="time">5:24</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/QFFt64vPovO-MfW-NFfR5zAQ5vjVilgpQVn_Gm0aTbEq5kBJ_0H9hL34wimxeWBCOZ6v42lsVQ=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">好樂團 GoodBand－他們說我是沒有用的年輕人 Official Lyrics Video</div>
+                  <div class="card-news">
+                    <p>好樂團 GoodBand</p>
+                    <p>觀看次數：70萬次．2年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/puPnKgV9I6I/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAfSn3eCl8Ah-MIXko7qrVidsRTBw" alt="">
+                <div class="time">7:14</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTSHYR8NVCyxDJYsvWol_W0woZ0nrTnsl91MXjX=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">deca joins | 一去不回來 Live at Legacy Taipei</div>
+                  <div class="card-news">
+                    <p>deca joins</p>
+                    <p>觀看次數：137萬次．3年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/gPjqWwkAymg/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAKGJIqGKmabW11yQyMceXwu6q_5Q" alt="">
+                <div class="time">6:10</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLRhoXUN5ouAkUmf5vg0l-VUGj381b96CHre29tb=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Bahamas - All I've Ever Known</div>
+                  <div class="card-news">
+                    <p>The Worst Taste</p>
+                    <p>觀看次數：60萬次．5年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/MYcUO-Ljxqc/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB23XeRekRN6QlrNWdK3nKlYT1BZQ" alt="">
+                <div class="time">2:24</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLQrUPUDP-maoCEIWHAlN1Fxxg8MMaNurUsVGf8yUA=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">《少年吔，安啦！》30週年4K修復版預告 7/8全台上映....</div>
+                  <div class="card-news">
+                    <p>牽猴子電影粉絲俱樂部</p>
+                    <p>觀看次數：9527次．8天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/Z8WOAsDuwhU/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCFDM2ugbufT5MBa54FulfVDBk_jg" alt="">
+                <div class="time">5:24</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/Bworw7X7iRlZyM1zNtWQ5b4o4hBxB6ljPrqMK2AtIzShXeNFGTxMDt98m8DylBplJscA6EPu=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Stranger Things 4 - Official Clip | Eleven's Powers</div>
+                  <div class="card-news">
+                    <p>MillieBobbyTime</p>
+                    <p>觀看次數：35萬次．1天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/rWekscQiz2Q/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC4mc2d6jY5acM7AHnmczCoASKvxg" alt="">
+                <div class="time">0:13</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLQCm8IJa-0LMlhrgH4gzD65jT36klWI0VwKQbRy-A=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">The worst timing</div>
+                  <div class="card-news">
+                    <p>Lonely's archives</p>
+                    <p>觀看次數：137萬次．8小時前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/oFjTLyu3aNg/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCqbHy44FQtYQM5B7BRgJUYngsfrA" alt="">
+                <div class="time">2:46</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/-ecaFusJWxeOaVW0-uHV8fXNhhTQoyW-TyfhE9JYLxOUO_AEnC3nszUu2LqNNAnu_BI3ujrKwg=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">榫接入門 | 十字搭接 Wood Joints making: Cross laps</div>
+                  <div class="card-news">
+                    <p>一木 YatMuk</p>
+                    <p>觀看次數：9076次．6個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/v4pi1LxuDHc/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBDdJ8geBJEZW1YIH3S9vAyB1u0Qw" alt="">
+                <div class="time">4:46</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/lm6c-RdjwQvgqw6-Ms4uDJZaLLTGWT-z2Prddu6atAktdPIhh8iyAYF6xSBogAFiKGj4wWSJ=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">The Lumineers - Sleep On The Floor (Official Video)</div>
+                  <div class="card-news">
+                    <p>The Lumineers</p>
+                    <p>觀看次數：1.8億次．5年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/tgB1wUcmbbw/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBIqr3Zoah_HKjCVdrF2N4_dI9ujQ" alt="">
+                <div class="time">1:29</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/fGvQjp1vAT1R4bAKTFLaSbdsfdYFDwAzVjeRVQeikH22bvHWsGULZdwIkpZXktcXZc5gFJuA3w=s48-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Marvel Studios' Thor: Love and Thunder | Official Teaser</div>
+                  <div class="card-news">
+                    <p>Marvel Entertainment</p>
+                    <p>觀看次數：39萬次．8天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/5g2mmmLq8XI/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCfI3KZPDbORW0D03QWfWgA98xN2g" alt="">
+                <div class="time">1:32:16</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/kzCvD6eLD9EtICoQ2ZRaYwuYGccFCXw7ql1w9daEJ_JwxGsC9R7JE0kdzMaKCkBvYoVS3X8Ekg=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Learn English Through Story :The Adventures of Sherlock....</div>
+                  <div class="card-news">
+                    <p>LETS - Learn English Through Story</p>
+                    <p>觀看次數：72萬次．8個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/Ju895y6XMlY/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAV6-zPH12IovD7ftihbME85Glgiw" alt="">
+                <div class="time">8:09</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/V5mmM1zyMzwYeeFmYDvsIUnZ3DZ6GgC5J0TYUP4-QjA6LpmNU03st76cjmyzxFE07o_z-PmHCw=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">《花家の故事》251早上爬不起來｜我們這一家 Muse闔家歡....</div>
+                  <div class="card-news">
+                    <p>Muse木棉花-闔家歡</p>
+                    <p>觀看次數：4.5萬次．5天前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/kYNTrRVHNmk/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBkZ_-7zxR9M-kS_sS7K7glrq9mZQ" alt="">
+                <div class="time">2:49</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTctOjL4JaSfz8_JLyYnEuLuYnslUWatEHpKw7WQw=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">The Walters - I Love You So</div>
+                  <div class="card-news">
+                    <p>the guy who edits</p>
+                    <p>觀看次數：639萬次．5年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/RrWBhVlD1H8/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCUA1Pvw0PyoL0mX5jXRkLt62EyqA" alt="">
+                <div class="time">5:57</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/HjXKmDGoAp6b-JdGYpqJYYeN4S_CMpD_kqWvldpN53cbzn-i73t6mVNo8mNki-xLPwi0BVSFi-o=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">什麼是雙極性情感障礙（躁鬱症）？海倫．法瑞爾</div>
+                  <div class="card-news">
+                    <p>TED-Ed</p>
+                    <p>觀看次數：45萬次．5年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/sU5b67UAQXw/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDsG3r62LuZQq8_J3pSmzCD6qtsVA" alt="">
+                <div class="time">1:20</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLR1g1rGeCzMBR6_lpzXlx59APCa8XwLwx4Zl1aL=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">新白雪公主</div>
+                  <div class="card-news">
+                    <p>陳夕</p>
+                    <p>觀看次數：312萬次．15年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/Ugg5X5lZt6E/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA7z-Y6Jh8LcflYbv4--V4Im8iR2g" alt="">
+                <div class="time">18:14</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTBsagAk3UlwyrKkGf9ACjuFsR4qoq_tNr_Kllo=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">讓你快速出汗的流暢版～ Surya Namaskar 拜日式 A,B,C</div>
+                  <div class="card-news">
+                    <p>Lynn Says Namaste</p>
+                    <p>觀看次數：1.3萬次．2年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/E99Et5mzxv0/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAIIVM9rKK1Itw09RKwyHkTDVtF2w" alt="">
+                <div class="time">16:49</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLSHuGZZN-2jeaRrkNPJEUr9jXEPBYOxH7hs9O286A=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Behind the Mac: Skywalker Sound | Apple</div>
+                  <div class="card-news">
+                    <p>Apple</p>
+                    <p>觀看次數：81萬次．3個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/c7sziIuNfN8/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCyNPte-Vza2o8HOK9JDUn4ya4aUQ" alt="">
+                <div class="time">2:53</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLTjyZOQjZtL2u5NxtW_dPgIfVLVCP0jQNa5l0UyoA=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">金旺，陪你考駕照的好夥伴</div>
+                  <div class="card-news">
+                    <p>Alien Chen</p>
+                    <p>觀看次數：8179次．2年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/iicfmXFALM8/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDpa1s9c9Y1ZbMIed6_WNRzbpPe3w" alt="">
+                <div class="time">1:20</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLRLSSLISvy6xmBnGStE710pHnqVhWy8IPfWL0St=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Chill Drive - Aesthetic Music ~ Lofi hip hop mix</div>
+                  <div class="card-news">
+                    <p>chilli music</p>
+                    <p>觀看次數：68萬次．2個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/Qm509gYHAe0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBliI8B-cfJbHp-FDSJPjkZX7o4vw" alt="">
+                <div class="time">18:14</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLSDBPSJQwrIqwwd0QIir74RiR5Q7sgm2wMj4MKKcA=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Takeuchi Mariya - Plastic Love (Night Tempo 100%....</div>
+                  <div class="card-news">
+                    <p>Artzie Music</p>
+                    <p>觀看次數：1276萬次．6年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/5qap5aO4i9A/hq720_live.jpg?sqp=CLSYmZQG-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAe3lfE4A6XdsFkncEjczrraCOotw" alt="">
+                <div class="time">58:43</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/KNYElmLFGAOSZoBmxYGKKXhGHrT2e7Hmz3WsBerbam5uaDXFADAmT7htj3OcC-uK1O88lC9fQg=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">lofi hip hop radio - beats to relax/study to</div>
+                  <div class="card-news">
+                    <p>Lofi Girl</p>
+                    <p>觀看次數：757萬次．3個月前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/IwvVzbSsy7A/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB5uOOAo89U7YrCDcggd9WHc7tEKA" alt="">
+                <div class="time">23:59</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLSdIxzGrPRdzcUPBua4REcBO-8T6kKbqprtSi5b-Q=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">[機車露營] 荒野中的日式料理｜デイキャンプ｜Day Camp｜單日野營</div>
+                  <div class="card-news">
+                    <p>Stewart Chung</p>
+                    <p>觀看次數：64萬次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/kTgMOQYo0eA/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAGAVMhUwZ95adqW1w7cuNNKQGTyA" alt="">
+                <div class="time">6:20</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLS7QEP3Z7JpTYMtEEaUgeulJ8nxfjfyxpsEKBkOQA=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">CURRENT JOYS // My Motorcycle</div>
+                  <div class="card-news">
+                    <p>carlosocarnero</p>
+                    <p>觀看次數：6.2萬次．4年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/eYDI8b5Nn5s/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDJ2ztxGKfiXAaIAzavdffvMPZK_Q" alt="">
+                <div class="time">3:28</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLRjKiaMXDV7rx4Yth9yll2rLl-n64tFt_NOiWf9=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">MV | Jack Stauber - Buttercup</div>
+                  <div class="card-news">
+                    <p>lisuga</p>
+                    <p>觀看次數：2.2億次．4年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/u-_9z2KDGIk/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDVdsZYjyNFGQxo3nFl0B00iNUG7g" alt="">
+                <div class="time">16:43</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLS7LvoxDUQMVVGVZK51_Q2U6PF_A8KEmcX6p5UH7A=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Fixed Gear Conversion - Vintage Road Bike</div>
+                  <div class="card-news">
+                    <p>waveywheelies</p>
+                    <p>觀看次數：59萬次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/pYsKrgSSoBs/hqdefault.jpg?sqp=-oaymwEcCOADEI4CSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCUhNW4j0ov8cGqdTSVhDnjvLqcrA" alt="">
+                <div class="time">10:44</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLQ_Yyr3qSJMqFR-Sai2ehcm654-j3sG_QcTkZ50=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">啟動到啦，超融合合體 ! 達古奧最強力量 !</div>
+                  <div class="card-news">
+                    <p>Cheung ka lok</p>
+                    <p>觀看次數：9.3萬次．12年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/abA0UlsphpM/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCLpCQlKjDhA6AUPCYr9u7_I4GQrQ" alt="">
+                <div class="time">5:55</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLQA4rd9BIIckwnYC_40JI6Bu1tjh5FKRil1YxXj=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Guns N' Roses Sweet Child O' Mine l MP3</div>
+                  <div class="card-news">
+                    <p>WiChonWichi</p>
+                    <p>觀看次數：71萬次．7年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/j_0UrSomgO0/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbebbnt07MbF-CbGsC9GaaInzJ2g" alt="">
+                <div class="time">2:48:52</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/x-2i4p4FUEXc2FQRDcuc6n6zu0gjVcbZNGLbJDIVlLDrnJKnkm75lvhWtDfj_NBjarPSshs8=s68-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Billie Eilish, Carla Morrison, Cigarettes After Sex, Emma Peters, Edmofo, OMER BALIK, YA NINA, Zubi</div>
+                  <div class="card-news">
+                    <p>Universe Nation</p>
+                    <p>觀看次數：37萬次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/PccS-4wSZCY/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDJGgitiffk62YS7p4fTZtAvVAUdg" alt="">
+                <div class="time">4:01</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/5VfrZUynIfprcBzu-pfdsbeG70aNxfLRPv9eYw-H1MkriSNpnyJ0usfiFmAED3jSoAXL3oUbwA=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">Red Hot Chili Peppers - These Are The Ways (Official Music Video)</div>
+                  <div class="card-news">
+                    <p>Red Hot Chili Peppers
+                    </p>
+                    <p>觀看次數：484萬次．1個前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-cover">
+                <img src="https://i.ytimg.com/vi/RMXuNVkjCtM/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCaZKJTNHt-W8G7_1FzpF6HjSI83A" alt="">
+                <div class="time">38:49</div>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <img src="https://yt3.ggpht.com/ytc/AKedOLSkJxRgGUU3uvQzkgJMFrNFDh6_K1FUmv3KqWvz=s88-c-k-c0x00ffffff-no-rj" alt="">
+                </div>
+                <div class="card-text">
+                  <div class="card-title">醜奴兒</div>
+                  <div class="card-news">
+                    <p>NoPartyForCaoDong 草東沒有派對</p>
+                    <p>觀看次數：104萬次．1年前</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <!-- <nav class="navbar">
+    <div class="menu-group">
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-house"></i>首頁</a></li>
+        <li><a href="#"><i class="fa-regular fa-compass"></i>探索</a></li>
+        <li><a href="#"><i class="fa-solid fa-otter"></i>shorts</a></li>
+        <li><a href="#"><i class="fa-solid fa-minimize"></i>訂閱內容</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <ul>
+        <li><a href="#"><i class="fa-regular fa-file-video"></i></i>媒體庫</a></li>
+        <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i>觀看紀錄</a></li>
+      </ul>
+    </div>
+    <div class="menu-group userLogin">
+      <p>登入帳戶即可對影片表示喜歡、發布留言及訂閱頻道。</p>
+      <div class="userLoginBtn"><a href="#"><i class="fa-regular fa-circle-user"></i>登入</a></div>
+    </div>
+    <div class="menu-group">
+      <h6>YOUTUBE 精選</h6>
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-record-vinyl"></i>音樂</a></li>
+        <li><a href="#"><i class="fa-solid fa-bowling-ball"></i>體育</a></li>
+        <li><a href="#"><i class="fa-brands fa-xbox"></i>遊戲</a></li>
+        <li><a href="#"><i class="fa-solid fa-tape"></i>電影</a></li>
+        <li><a href="#"><i class="fa-solid fa-earth-oceania"></i>新聞</a></li>
+        <li><a href="#"><i class="fa-brands fa-gratipay"></i>直播</a></li>
+        <li><a href="#"><i class="fa-solid fa-globe"></i>360 度影片</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <ul>
+        <li><a href="#"><i class="fa-regular fa-rectangle-xmark"></i>瀏覽頻道</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <h6>更多 YOUTUBE 功能</h6>
+      <ul>
+        <li style="font-size: 7px; letter-spacing: 0.1px; margin-left: -3px;"><a href="#"><i
+              class="fa-solid fa-boxes-packing"></i>YouTube Premium</a></li>
+        <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i>直播</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <ul>
+        <li><a href="#"><i class="fa-solid fa-gear"></i>設定</a></li>
+        <li><a href="#"><i class="fa-solid fa-font-awesome"></i>檢舉紀錄</a></li>
+        <li><a href="#"><i class="fa-regular fa-circle-question"></i>說明</a></li>
+        <li><a href="#"><i class="fa-regular fa-envelope"></i>提供意見</a></li>
+      </ul>
+    </div>
+    <div class="menu-group">
+      <ul>
+        <li><a href="https://about.youtube/">簡介</a></li>
+        <li><a href="https://blog.youtube/">媒體</a></li>
+        <li><a href="https://www.youtube.com/howyoutubeworks/policies/copyright/">版權</a></li>
+        <li><a href="https://www.youtube.com/t/contact_us/">與我們聯絡</a></li>
+        <li><a href="https://www.youtube.com/creators/">創作者</a></li>
+        <li><a href="https://www.youtube.com/ads/">廣告</a></li>
+        <li><a href="https://developers.google.com/youtube">開發人員</a></li>
+      </ul>
+      <ul>
+        <li><a href="https://www.youtube.com/t/terms">條款</a></li>
+        <li><a href="https://policies.google.com/privacy?hl=zh-TW">隱私權</a></li>
+        <li><a href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/">政策與安全性</a></li>
+        <li><a
+            href="https://www.youtube.com/howyoutubeworks/?utm_campaign=ytgen&utm_source=ythp&utm_medium=LeftNav&utm_content=txt&u=https%3A%2F%2Fwww.youtube.com%2Fhowyoutubeworks%3Futm_source%3Dythp%26utm_medium%3DLeftNav%26utm_campaign%3Dytgen">YouTube運作方式</a>
+        </li>
+        <li><a href="https://www.youtube.com/new">測試新功能</a></li>
+      </ul>
+      <p>© 2022 Google LLC</p>
+    </div>
+  </nav> -->
+
+  <script>
+    /*
+    */
+  </script>
+</body>
+</html>
